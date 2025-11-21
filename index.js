@@ -26,8 +26,14 @@ class HashMap {
     }
 
     set(key, value) {
+        let currLoad = this.capacity * this.loadFactor
+        if(this.size >= currLoad) {
+            this.capacity*=2
+        }
 
         let hashIndex = this.hash(key)%this.capacity
+        
+        
         // let isBucketPresent = false;
         let valueToChange = null
         let indexToChange = null
@@ -43,8 +49,20 @@ class HashMap {
                     valueToChange = value
                     indexToChange = index
                 }
+                // else {
+                
+                // }
             })
             
+        }
+        if(bucketPresent && !valueToChange) {
+            
+            const bucket = new Bucket(key, value)
+            this.buckets[hashIndex].push(bucket)
+            this.size++
+        //     this.buckets.map((bucket) => console.log(bucket))
+        // console.log(this.size);
+            return
         }
 
         if(valueToChange) {
@@ -56,16 +74,17 @@ class HashMap {
             bucketPresent[indexToChange]
             // console.log(this.buckets)
             
-        }
-
-       else if(!bucketPresent && !valueToChange) {
+        }else if(!bucketPresent && !valueToChange) {
             const bucket = new Bucket(key, value)
             this.buckets[hashIndex] = [bucket]
+            this.size++
         }
 
         
         // console.log(hashIndex);
         this.buckets.map((bucket) => console.log(bucket))
+        // console.log(this.size);
+        
         
     }
 }
@@ -73,8 +92,25 @@ class HashMap {
 
 const hashMap = new HashMap()
 
-console.log(hashMap.set("Rahul", "98851567"))
-console.log(hashMap.set("Rahul", "98"))
-console.log(hashMap.set("chinnu", "98851567"))
-console.log(hashMap.set("malu", "98851567"))
-console.log(hashMap.set("Rahulxx2", "9995887"))
+// console.log(hashMap.set("tom", "98851567"))
+// console.log(hashMap.set("mot", "988516567"))
+
+
+// console.log(hashMap.set("Rahul", "98851567"))
+// console.log(hashMap.set("Rahul", "98"))
+// console.log(hashMap.set("chinnu", "98851567"))
+// console.log(hashMap.set("malu", "98851567"))
+// console.log(hashMap.set("ssd", "9995887"))
+
+console.log(hashMap.set('apple', 'red'))
+console.log(hashMap.set('carrot', 'orange'))
+console.log(hashMap.set('banana', 'yellow'))
+console.log(hashMap.set('dog', 'brown'))
+console.log(hashMap.set('elephant', 'gray'))
+console.log(hashMap.set('frog', 'green'))
+console.log(hashMap.set('grape', 'purple'))
+console.log(hashMap.set('hat', 'black'))
+console.log(hashMap.set('ice cream', 'white'))
+console.log(hashMap.set('jacket', 'blue'))
+console.log(hashMap.set('kite', 'pink'))
+console.log(hashMap.set('lion', 'golden'))
