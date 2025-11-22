@@ -1,3 +1,3 @@
-if (!bucket) {
-          return
-        }
+ if (!isRehashing) {
+        this.size++
+      }

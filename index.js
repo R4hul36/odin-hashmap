@@ -76,12 +76,10 @@ class HashMap {
     }
 
     if (valueToChange) {
-      console.log('Yes value to change')
-      console.log(bucketPresent[indexToChange].value)
-      console.log(valueToChange)
+      // console.log('Yes value to change')
+      // console.log(bucketPresent[indexToChange].value)
+      // console.log(valueToChange)
       bucketPresent[indexToChange].value = valueToChange
-
-      bucketPresent[indexToChange]
       // console.log(this.buckets)
     } else if (!bucketPresent && !valueToChange) {
       const bucket = new Bucket(key, value)
@@ -122,7 +120,7 @@ console.log(hashMap.set('kite', 'pink'))
 console.log(hashMap.set('lion', 'golden'))
 console.log(hashMap.set('moon', 'silver'))
 
-console.log(hashMap.set('carrot', 'blablabla'))
+// console.log(hashMap.set('carrot', 'blablabla'))
 
 hashMap.buckets.forEach((bucket) => console.log(bucket))
 console.log(hashMap.capacity)
