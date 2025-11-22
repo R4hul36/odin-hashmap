@@ -24,81 +24,61 @@ class HashMap {
   }
 
   set(key, value, isRehashing = false) {
-    let currLoad = this.capacity * this.loadFactor
-    if (this.size >= currLoad) {
-      this.capacity *= 2
-      let oldArray = this.buckets
-      this.buckets = new Array(this.capacity)
-
-      oldArray.forEach((bucket) => {
-        if (!bucket) {
-          return
-        }
-
-        console.log(bucket[0].name)
-        if (!bucket.length) {
-          return
-        }
-        if (bucket.length > 1) {
-          bucket.forEach((innerBucket) =>
-            this.set(innerBucket.name, innerBucket.value, true)
-          )
-        } else if (bucket.length === 1) {
-          this.set(bucket[0].name, bucket[0].value, true)
-        }
-      })
-    }
-
+   
     let hashIndex = this.hash(key) % this.capacity
+    let bucket = this.buckets[hashIndex]
+    let currLoad = this.capacity * this.loadFactor
+    
 
-    // let isBucketPresent = false;
-    let valueToChange = null
-    let indexToChange = null
-
-    let bucketPresent = this.buckets[hashIndex]
-    if (bucketPresent) {
-      console.log('yes')
-      bucketPresent.forEach((bucket, index) => {
-        if (bucket.name === key) {
-          console.log('sdfsdfasd')
-          valueToChange = value
-          indexToChange = index
-        }
-      })
-    }
-    if (bucketPresent && !valueToChange) {
-      const bucket = new Bucket(key, value)
-      this.buckets[hashIndex].push(bucket)
-      if (!isRehashing) {
+    if(!bucket) {
+      this.buckets[hashIndex] = [new Bucket(key, value)]
+      if(!isRehashing) {
         this.size++
+        if (this.size > currLoad) {
+          this.resize()
+        }     
       }
       return
     }
-
-    if (valueToChange) {
-      // console.log('Yes value to change')
-      // console.log(bucketPresent[indexToChange].value)
-      // console.log(valueToChange)
-      bucketPresent[indexToChange].value = valueToChange
-      // console.log(this.buckets)
-    } else if (!bucketPresent && !valueToChange) {
-      const bucket = new Bucket(key, value)
-      this.buckets[hashIndex] = [bucket]
-      if (!isRehashing) {
-        this.size++
+    
+    for(let i =0; i<bucket.length; i++) {
+      if(bucket[i].name === key) {
+        bucket[i].value = value
+        return
       }
     }
 
-    // console.log(hashIndex);
-    // this.buckets.forEach((bucket) => console.log(bucket))
-    // console.log(this.size);
+    bucket.push(new Bucket(key, value))
+    if(!isRehashing) {
+        this.size++
+        if (this.size > currLoad) {
+          this.resize()
+        }  
+      }
+    
   }
+
+  resize() {
+    this.capacity *= 2
+    let oldArray = this.buckets
+    this.buckets = new Array(this.capacity)
+
+    oldArray.forEach((bucket) => {
+      if (!bucket) {
+        return
+      }
+      bucket.forEach((innerBucket) =>
+        this.set(innerBucket.name, innerBucket.value, true)
+      )
+    })
+  }
+
 }
 
 const hashMap = new HashMap()
 
 // console.log(hashMap.set("tom", "98851567"))
-// console.log(hashMap.set("mot", "988516567"))
+// console.log(hashMap.set("maotdzz", "988516567"))
 
 // console.log(hashMap.set("Rahul", "98851567"))
 // console.log(hashMap.set("Rahul", "98"))
@@ -120,7 +100,9 @@ console.log(hashMap.set('kite', 'pink'))
 console.log(hashMap.set('lion', 'golden'))
 console.log(hashMap.set('moon', 'silver'))
 
-// console.log(hashMap.set('carrot', 'blablabla'))
+console.log(hashMap.set('carrot', 'blablabla'))
 
 hashMap.buckets.forEach((bucket) => console.log(bucket))
 console.log(hashMap.capacity)
+
+
