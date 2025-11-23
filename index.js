@@ -24,38 +24,35 @@ class HashMap {
   }
 
   set(key, value, isRehashing = false) {
-   
     let hashIndex = this.hash(key) % this.capacity
     let bucket = this.buckets[hashIndex]
     let currLoad = this.capacity * this.loadFactor
-    
 
-    if(!bucket) {
+    if (!bucket) {
       this.buckets[hashIndex] = [new Bucket(key, value)]
-      if(!isRehashing) {
+      if (!isRehashing) {
         this.size++
         if (this.size > currLoad) {
           this.resize()
-        }     
+        }
       }
       return
     }
-    
-    for(let i =0; i<bucket.length; i++) {
-      if(bucket[i].name === key) {
+
+    for (let i = 0; i < bucket.length; i++) {
+      if (bucket[i].name === key) {
         bucket[i].value = value
         return
       }
     }
 
     bucket.push(new Bucket(key, value))
-    if(!isRehashing) {
-        this.size++
-        if (this.size > currLoad) {
-          this.resize()
-        }  
+    if (!isRehashing) {
+      this.size++
+      if (this.size > currLoad) {
+        this.resize()
       }
-    
+    }
   }
 
   resize() {
@@ -73,6 +70,66 @@ class HashMap {
     })
   }
 
+  get(key) {
+    const hashIndex = this.hash(key) % this.capacity
+    const bucket = this.buckets[hashIndex]
+
+    if (!bucket) {
+      return null
+    }
+    let isKey = bucket.find((entry) => entry.name === key)
+    return !isKey ? null : isKey.value
+  }
+
+  length() {
+    return this.size
+  }
+
+  remove(key) {
+    const hashIndex = this.hash(key) % this.capacity
+    const bucket = this.buckets[hashIndex]
+
+    if (!bucket) {
+      return false
+    }
+
+    let keyFound = false
+    let entryIndex = null
+
+    for (let i = 0; i < bucket.length; i++) {
+      if (bucket[i].name === key) {
+        keyFound = true
+        entryIndex = i
+      }
+    }
+    if (keyFound && entryIndex !== null) {
+      bucket.splice(entryIndex, 1)
+      this.size -= 1
+    }
+    return keyFound
+  }
+
+  keys() {
+    let keyArr = []
+    this.buckets.forEach((bucket) => {
+      if (!bucket) return
+      for (const entry of bucket) {
+        keyArr.push(entry.name)
+      }
+    })
+    return keyArr
+  }
+
+  values() {
+    let valueArr = []
+    this.buckets.forEach((bucket) => {
+      if (!bucket) return
+      for (const entry of bucket) {
+        valueArr.push(entry.value)
+      }
+    })
+    return valueArr
+  }
 }
 
 const hashMap = new HashMap()
@@ -98,11 +155,11 @@ console.log(hashMap.set('ice cream', 'white'))
 console.log(hashMap.set('jacket', 'blue'))
 console.log(hashMap.set('kite', 'pink'))
 console.log(hashMap.set('lion', 'golden'))
-console.log(hashMap.set('moon', 'silver'))
+// console.log(hashMap.set('moon', 'silver'))
 
 console.log(hashMap.set('carrot', 'blablabla'))
+console.log(hashMap.remove('apple'))
 
-hashMap.buckets.forEach((bucket) => console.log(bucket))
+// hashMap.buckets.forEach((bucket) => console.log(bucket))
 console.log(hashMap.capacity)
-
-
+console.log(hashMap.values())
