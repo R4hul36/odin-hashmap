@@ -10,7 +10,7 @@ class HashMap {
     this.loadFactor = 0.75
     this.capacity = 16
     this.size = 0
-    this.buckets = []
+    this.buckets = Array.from({ length: this.capacity }, () => []);
   }
   hash(key) {
     let hashCode = 0
@@ -58,7 +58,7 @@ class HashMap {
   resize() {
     this.capacity *= 2
     let oldArray = this.buckets
-    this.buckets = new Array(this.capacity)
+    this.buckets = Array.from({ length: this.capacity }, () => []);
 
     oldArray.forEach((bucket) => {
       if (!bucket) {
@@ -85,13 +85,17 @@ class HashMap {
     return this.size
   }
 
+  has(key) {
+    let hashIndex = this.hash(key) % this.capacity
+    let bucket = this.buckets[hashIndex]
+
+    return bucket.some( entry => entry.name === key)
+    
+  }
+
   remove(key) {
     const hashIndex = this.hash(key) % this.capacity
     const bucket = this.buckets[hashIndex]
-
-    if (!bucket) {
-      return false
-    }
 
     let keyFound = false
     let entryIndex = null
@@ -109,10 +113,15 @@ class HashMap {
     return keyFound
   }
 
+  clear() {
+    this.capacity = 16
+    this.size = 0
+    this.buckets = Array.from({ length: this.capacity }, () => []);
+  }
+
   keys() {
     let keyArr = []
     this.buckets.forEach((bucket) => {
-      if (!bucket) return
       for (const entry of bucket) {
         keyArr.push(entry.name)
       }
@@ -123,12 +132,21 @@ class HashMap {
   values() {
     let valueArr = []
     this.buckets.forEach((bucket) => {
-      if (!bucket) return
       for (const entry of bucket) {
         valueArr.push(entry.value)
       }
     })
     return valueArr
+  }
+
+  entries() {
+    let entriesArr = []
+    this.buckets.forEach((bucket) => {
+      for (const entry of bucket) {
+        entriesArr.push([entry.name, entry.value])
+      }
+    })
+    return entriesArr
   }
 }
 
@@ -160,6 +178,7 @@ console.log(hashMap.set('lion', 'golden'))
 console.log(hashMap.set('carrot', 'blablabla'))
 console.log(hashMap.remove('apple'))
 
-// hashMap.buckets.forEach((bucket) => console.log(bucket))
+hashMap.buckets.forEach((bucket) => console.log(bucket))
+// console.log(hashMap.clear())
 console.log(hashMap.capacity)
-console.log(hashMap.values())
+console.log(hashMap.has("lion"))

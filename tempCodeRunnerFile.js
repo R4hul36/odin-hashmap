@@ -1,1 +1,0 @@
-keyArr.push(bucket.name)
