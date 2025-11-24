@@ -5,12 +5,12 @@ class Bucket {
   }
 }
 
-class HashMap {
+export class HashMap {
   constructor() {
     this.loadFactor = 0.75
     this.capacity = 16
     this.size = 0
-    this.buckets = Array.from({ length: this.capacity }, () => []);
+    this.buckets = Array.from({ length: this.capacity }, () => [])
   }
   hash(key) {
     let hashCode = 0
@@ -29,6 +29,7 @@ class HashMap {
     let currLoad = this.capacity * this.loadFactor
 
     if (!bucket) {
+      // if bucket in the particular index is missing create a new bucket and assign it to the index
       this.buckets[hashIndex] = [new Bucket(key, value)]
       if (!isRehashing) {
         this.size++
@@ -39,6 +40,7 @@ class HashMap {
       return
     }
 
+    // update the value if the key already exists
     for (let i = 0; i < bucket.length; i++) {
       if (bucket[i].name === key) {
         bucket[i].value = value
@@ -46,6 +48,7 @@ class HashMap {
       }
     }
 
+    // push a new entry into an existing bucket when collision occurs
     bucket.push(new Bucket(key, value))
     if (!isRehashing) {
       this.size++
@@ -55,18 +58,15 @@ class HashMap {
     }
   }
 
+  // resize method runs when size is greater than 75% in this case
   resize() {
     this.capacity *= 2
     let oldArray = this.buckets
-    this.buckets = Array.from({ length: this.capacity }, () => []);
+    this.buckets = Array.from({ length: this.capacity }, () => [])
 
+    // get all the entries from the old bucket and rehash the buckets to their new index.
     oldArray.forEach((bucket) => {
-      if (!bucket) {
-        return
-      }
-      bucket.forEach((innerBucket) =>
-        this.set(innerBucket.name, innerBucket.value, true)
-      )
+      bucket.forEach((entry) => this.set(entry.name, entry.value, true))
     })
   }
 
@@ -74,9 +74,6 @@ class HashMap {
     const hashIndex = this.hash(key) % this.capacity
     const bucket = this.buckets[hashIndex]
 
-    if (!bucket) {
-      return null
-    }
     let isKey = bucket.find((entry) => entry.name === key)
     return !isKey ? null : isKey.value
   }
@@ -89,8 +86,7 @@ class HashMap {
     let hashIndex = this.hash(key) % this.capacity
     let bucket = this.buckets[hashIndex]
 
-    return bucket.some( entry => entry.name === key)
-    
+    return bucket.some((entry) => entry.name === key)
   }
 
   remove(key) {
@@ -100,12 +96,15 @@ class HashMap {
     let keyFound = false
     let entryIndex = null
 
+    // if the key exists, set the varibles to true and assign the index
     for (let i = 0; i < bucket.length; i++) {
       if (bucket[i].name === key) {
         keyFound = true
         entryIndex = i
       }
     }
+
+    // if keyFound and entryIndex values are present, remove that particular entry from the index
     if (keyFound && entryIndex !== null) {
       bucket.splice(entryIndex, 1)
       this.size -= 1
@@ -114,9 +113,10 @@ class HashMap {
   }
 
   clear() {
+    // resets the buckets array to default
     this.capacity = 16
     this.size = 0
-    this.buckets = Array.from({ length: this.capacity }, () => []);
+    this.buckets = Array.from({ length: this.capacity }, () => [])
   }
 
   keys() {
@@ -149,36 +149,3 @@ class HashMap {
     return entriesArr
   }
 }
-
-const hashMap = new HashMap()
-
-// console.log(hashMap.set("tom", "98851567"))
-// console.log(hashMap.set("maotdzz", "988516567"))
-
-// console.log(hashMap.set("Rahul", "98851567"))
-// console.log(hashMap.set("Rahul", "98"))
-// console.log(hashMap.set("chinnu", "98851567"))
-// console.log(hashMap.set("malu", "98851567"))
-// console.log(hashMap.set("ssd", "9995887"))
-
-console.log(hashMap.set('apple', 'red'))
-console.log(hashMap.set('carrot', 'orange'))
-console.log(hashMap.set('banana', 'yellow'))
-console.log(hashMap.set('dog', 'brown'))
-console.log(hashMap.set('elephant', 'gray'))
-console.log(hashMap.set('frog', 'green'))
-console.log(hashMap.set('grape', 'purple'))
-console.log(hashMap.set('hat', 'black'))
-console.log(hashMap.set('ice cream', 'white'))
-console.log(hashMap.set('jacket', 'blue'))
-console.log(hashMap.set('kite', 'pink'))
-console.log(hashMap.set('lion', 'golden'))
-// console.log(hashMap.set('moon', 'silver'))
-
-console.log(hashMap.set('carrot', 'blablabla'))
-console.log(hashMap.remove('apple'))
-
-hashMap.buckets.forEach((bucket) => console.log(bucket))
-// console.log(hashMap.clear())
-console.log(hashMap.capacity)
-console.log(hashMap.has("lion"))
